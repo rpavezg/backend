@@ -1,6 +1,6 @@
 const express = require('express');
 const { verifyToken } = require('../middleware/authMiddleware');  // Middleware para verificar el token
-const { getProfile } = require('../controllers/authController');  // Controlador para obtener el perfil
+const { getProfile } = require('../controllers/authController');  // Asegúrate de que esta función esté definida y exportada correctamente
 const pool = require('../config/db');
 const router = express.Router();
 
