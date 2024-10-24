@@ -8,7 +8,9 @@ const protectedRoutes = require('./routes/protectedRoutes');  // Importar rutas 
 const artistsRoutes = require('./routes/artistsRoutes'); // Importar la nueva ruta de artistas
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: 'https://frontendgaleria.onrender.com', 
+}));
 app.use(express.json());
 
 // Registrar las rutas de autenticación con prefijo '/api/auth'
