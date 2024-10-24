@@ -9,19 +9,19 @@ const artistsRoutes = require('./routes/artistsRoutes'); // Importar la nueva ru
 
 const app = express();
 app.use(cors({
-  origin: 'https://frontgaleria.onrender.com', // Asegúrate de que esta URL sea la correcta
+  origin: 'https://frontgaleria.onrender.com', // URL del frontend
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true // Si necesitas cookies o autenticación basada en sesiones
 }));
 app.use(express.json());
 
-// Registrar las rutas de autenticación con prefijo '/api/auth'
+// Registrar las rutas de autenticación
 app.use('/api/auth', authRoutes);
 
-// Registrar las rutas protegidas con prefijo '/api/protected'
+// Registrar las rutas protegidas
 app.use('/api/protected', protectedRoutes);
 
-// Registrar las rutas de artistas con prefijo '/api/artists'
+// Registrar las rutas de artistas
 app.use('/api/artists', artistsRoutes);
 
 // Ruta de prueba para verificar que el servidor esté corriendo
@@ -38,4 +38,4 @@ if (process.env.NODE_ENV !== 'test') {
   });
 }
 
-module.exports = app;  // Exportar app para usar en las pruebas con Supertest
+module.exports = app;
