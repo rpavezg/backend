@@ -4,6 +4,7 @@ const pool = require('../config/db');
 
 // Controlador para registrar un nuevo usuario
 exports.register = async (req, res) => {
+  console.log('Datos recibidos para registro:', req.body);
   const { email, nombre, apellido, password, level } = req.body;
 
   try {
