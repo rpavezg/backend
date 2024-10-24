@@ -11,14 +11,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Registrar las rutas de autenticación
-app.use('/api', authRoutes);
+// Registrar las rutas de autenticación con prefijo '/api/auth'
+app.use('/api/auth', authRoutes);
 
-// Registrar las rutas protegidas
-app.use('/api', protectedRoutes);
+// Registrar las rutas protegidas con prefijo '/api/protected'
+app.use('/api/protected', protectedRoutes);
 
-// Registrar las rutas de artistas
-app.use('/api', artistsRoutes);  // Las rutas de artistas se registran aquí
+// Registrar las rutas de artistas con prefijo '/api/artists'
+app.use('/api/artists', artistsRoutes);
 
 // Ruta de prueba para verificar que el servidor esté corriendo
 app.get('/', (req, res) => {

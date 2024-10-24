@@ -1,9 +1,10 @@
 const express = require('express');
+const { verifyToken } = require('../middleware/authMiddleware'); // Importar el middleware para verificar el token
 const pool = require('../config/db');  // Conexión a la base de datos
 const router = express.Router();
 
-// Ruta para obtener la lista de artistas
-router.get('/artists', async (req, res) => {
+// Ruta para obtener la lista de artistas (protegida)
+router.get('/artists', verifyToken, async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM artista');  // Consulta la tabla 'artista' en la BD
     res.json(result.rows);  // Devuelve los resultados en formato JSON
@@ -14,3 +15,4 @@ router.get('/artists', async (req, res) => {
 });
 
 module.exports = router;
+

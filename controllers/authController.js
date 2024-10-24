@@ -39,7 +39,7 @@ exports.login = async (req, res) => {
 
     // Buscar el usuario en la base de datos por email
     const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-    const user = result.rows[0];  // Asegúrate de que `user` se define aquí
+    const user = result.rows[0];
 
     if (!user) {
       return res.status(400).json({ error: 'Usuario no encontrado' });
@@ -52,7 +52,7 @@ exports.login = async (req, res) => {
       return res.status(400).json({ error: 'Contraseña incorrecta' });
     }
 
-    // Mueve la generación del token aquí
+    // Generar un token JWT con la información del usuario
     const token = jwt.sign(
       { id: user.id, email: user.email, level: user.level },
       process.env.JWT_SECRET,
@@ -61,9 +61,29 @@ exports.login = async (req, res) => {
       }
     );
 
-    res.status(200).json({ token });
+    res.status(200).json({ token, user: { id: user.id, email: user.email, level: user.level, nombre: user.nombre, apellido: user.apellido } });
   } catch (error) {
     console.error('Error en el inicio de sesión:', error);
     res.status(500).json({ error: 'Error al iniciar sesión' });
+  }
+};
+
+// Controlador para obtener el perfil del usuario autenticado
+exports.getProfile = async (req, res) => {
+  try {
+    // Obtener el ID del usuario desde el token (req.user se rellena en el middleware de autenticación)
+    const userId = req.user.id;
+    
+    const result = await pool.query('SELECT email, nombre, apellido FROM users WHERE id = $1', [userId]);
+    const user = result.rows[0];
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    res.json({ user });
+  } catch (error) {
+    console.error('Error al obtener el perfil:', error);
+    res.status(500).json({ error: 'Error al obtener el perfil del usuario' });
   }
 };
