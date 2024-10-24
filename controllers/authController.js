@@ -76,3 +76,24 @@ exports.login = async (req, res) => {
     res.status(500).json({ error: 'Error al iniciar sesión' });
   }
 };
+
+// Controlador para obtener el perfil del usuario autenticado
+exports.getProfile = async (req, res) => {
+  try {
+    // Obtener el ID del usuario del token JWT decodificado
+    const userId = req.user.id;
+    
+    // Buscar el perfil del usuario en la base de datos
+    const result = await pool.query('SELECT email, nombre, apellido, level FROM users WHERE id = $1', [userId]);
+    const user = result.rows[0];
+
+    if (!user) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    res.json({ user });
+  } catch (error) {
+    console.error('Error al obtener el perfil del usuario:', error);
+    res.status(500).json({ error: 'Error al obtener el perfil' });
+  }
+};
