@@ -1,7 +1,6 @@
 const express = require('express');
-const { verifyToken } = require('../middleware/authMiddleware');  // Middleware para verificar el token
-const { getProfile } = require('../controllers/authController');  // Controlador para obtener el perfil
-const pool = require('../config/db');
+const { verifyToken } = require('../middleware/authMiddleware');
+const { getProfile } = require('../controllers/authController');
 const router = express.Router();
 
 // Ruta protegida para obtener el perfil del usuario autenticado
