@@ -35,7 +35,6 @@ exports.register = async (req, res) => {
   }
 };
 
-
 // Controlador para iniciar sesión
 exports.login = async (req, res) => {
   const { email, password } = req.body;
