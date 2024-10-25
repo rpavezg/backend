@@ -4,7 +4,12 @@ const pool = require('../config/db');
 
 // Controlador para registrar un nuevo usuario
 exports.register = async (req, res) => {
-  const { email, nombre, apellido, password, level } = req.body;
+  const { email, nombre, apellido, password } = req.body;
+
+  // Verificar que todos los campos requeridos estén presentes
+  if (!email || !nombre || !apellido || !password) {
+    return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+  }
 
   try {
     // Verificar si el email ya está registrado
@@ -17,13 +22,10 @@ exports.register = async (req, res) => {
     // Encriptar la contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Si no se proporciona el nivel, establecerlo en 2 por defecto
-    const userLevel = level || 2;
-
-    // Guardar el usuario en la base de datos
+    // Guardar el usuario en la base de datos con nivel predeterminado de 2
     await pool.query(
       'INSERT INTO users (email, nombre, apellido, password, level) VALUES ($1, $2, $3, $4, $5)',
-      [email, nombre, apellido, hashedPassword, userLevel]
+      [email, nombre, apellido, hashedPassword, 2]
     );
 
     res.status(201).json({ message: 'Usuario registrado exitosamente' });
@@ -32,6 +34,7 @@ exports.register = async (req, res) => {
     res.status(500).json({ error: `Error al registrar usuario: ${error.message}` });
   }
 };
+
 
 // Controlador para iniciar sesión
 exports.login = async (req, res) => {
