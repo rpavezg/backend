@@ -76,7 +76,7 @@ router.get('/offers', verifyToken, async (req, res) => {
     console.error('Error al obtener las ofertas:', error);
     res.status(500).json({ error: 'Error al obtener las ofertas' });
   }
-});
+});s
 
 // Eliminar "Me gusta" de una obra
 router.delete('/likes/:id', verifyToken, async (req, res) => {
