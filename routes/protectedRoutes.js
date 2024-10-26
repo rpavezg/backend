@@ -15,10 +15,20 @@ router.get('/artworks', verifyToken, async (req, res) => {
 });
 
 // Registrar "Me gusta" para una obra
-router.post('/artworks/:id/like', verifyToken, async (req, res) => {
+router.post('/protected/artworks/:id/like', verifyToken, async (req, res) => {
   try {
     const artworkId = req.params.id;
-    await pool.query('INSERT INTO me_gusta (id_obra, id_users) VALUES ($1, $2)', [artworkId, req.user.id]);
+    const userId = req.user.id; // Obtener el ID del usuario desde el token
+
+    // Verificar si ya existe un "Me gusta" de este usuario para esta obra
+    const existingLike = await pool.query('SELECT * FROM me_gusta WHERE id_obra = $1 AND id_users = $2', [artworkId, userId]);
+
+    if (existingLike.rows.length > 0) {
+      return res.status(400).json({ error: 'Ya has dado "Me gusta" a esta obra' });
+    }
+
+    // Insertar el "Me gusta" en la base de datos
+    await pool.query('INSERT INTO me_gusta (id_obra, id_users) VALUES ($1, $2)', [artworkId, userId]);
     res.json({ message: 'Me gusta registrado con éxito' });
   } catch (error) {
     console.error('Error al registrar "Me gusta":', error);
