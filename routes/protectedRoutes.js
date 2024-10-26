@@ -1,5 +1,6 @@
 // artistsRoutes.js (actualizado)
 const express = require('express');
+const { verifyToken } = require('../middleware/authMiddleware');
 const pool = require('../config/db');  // Conexión a la base de datos
 const router = express.Router();
 
