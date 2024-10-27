@@ -122,6 +122,16 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: 'Error al obtener los artistas' });
   }
 });
+// Ruta para obtener todos los artistas (protegida)
+router.get('/artists', verifyToken, async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM artista');
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error al obtener los artistas:', error);
+    res.status(500).json({ error: 'Error al obtener los artistas' });
+  }
+});
 
 // Ruta protegida para obtener el perfil del usuario
 router.get('/profile', verifyToken, async (req, res) => {
