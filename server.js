@@ -8,13 +8,21 @@ const protectedRoutes = require('./routes/protectedRoutes');
 const artistsRoutes = require('./routes/artistsRoutes');
 
 const app = express();
+
+// Configuración de CORS para aceptar solicitudes del frontend
 app.use(cors({
-  origin: 'https://frontgaleria.onrender.com',
+  origin: 'https://frontgaleria.onrender.com', // URL del frontend
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'], // Permitir la cabecera Authorization
   credentials: true,
 }));
+
+// Middleware para manejar solicitudes preflight
+app.options('*', cors());
+
 app.use(express.json());
 
+// Rutas
 app.use('/api/auth', authRoutes); // Autenticación
 app.use('/api/protected', protectedRoutes); // Rutas protegidas
 app.use('/api/artists', artistsRoutes); // Rutas de artistas
