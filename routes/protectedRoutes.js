@@ -141,4 +141,90 @@ router.get('/profile', verifyToken, async (req, res) => {
   }
 });
 
+// Crear un nuevo artista
+router.post('/artists', verifyToken, async (req, res) => {
+  const { nombre, biografia, nacionalidad, nacimiento, img } = req.body;
+  try {
+    const result = await pool.query(
+      'INSERT INTO artista (nombre, biografia, nacionalidad, nacimiento, img) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [nombre, biografia, nacionalidad, nacimiento, img]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error al crear el artista:', error);
+    res.status(500).json({ error: 'Error al crear el artista' });
+  }
+});
+
+// Modificar un artista existente
+router.put('/artists/:id', verifyToken, async (req, res) => {
+  const { id } = req.params;
+  const { nombre, biografia, nacionalidad, nacimiento, img } = req.body;
+  try {
+    const result = await pool.query(
+      'UPDATE artista SET nombre = $1, biografia = $2, nacionalidad = $3, nacimiento = $4, img = $5 WHERE id = $6 RETURNING *',
+      [nombre, biografia, nacionalidad, nacimiento, img, id]
+    );
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error al modificar el artista:', error);
+    res.status(500).json({ error: 'Error al modificar el artista' });
+  }
+});
+
+// Eliminar un artista
+router.delete('/artists/:id', verifyToken, async (req, res) => {
+  const { id } = req.params;
+  try {
+    await pool.query('DELETE FROM artista WHERE id = $1', [id]);
+    res.json({ message: 'Artista eliminado exitosamente' });
+  } catch (error) {
+    console.error('Error al eliminar el artista:', error);
+    res.status(500).json({ error: 'Error al eliminar el artista' });
+  }
+});
+
+// Crear una nueva obra
+router.post('/artworks', verifyToken, async (req, res) => {
+  const { id_artista, nombre, descripcion, precio, estado, img } = req.body;
+  try {
+    const result = await pool.query(
+      'INSERT INTO obra (id_artista, nombre, descripcion, precio, estado, img) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      [id_artista, nombre, descripcion, precio, estado, img]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error al crear la obra:', error);
+    res.status(500).json({ error: 'Error al crear la obra' });
+  }
+});
+
+// Modificar una obra existente
+router.put('/artworks/:id', verifyToken, async (req, res) => {
+  const { id } = req.params;
+  const { id_artista, nombre, descripcion, precio, estado, img } = req.body;
+  try {
+    const result = await pool.query(
+      'UPDATE obra SET id_artista = $1, nombre = $2, descripcion = $3, precio = $4, estado = $5, img = $6 WHERE id = $7 RETURNING *',
+      [id_artista, nombre, descripcion, precio, estado, img, id]
+    );
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error al modificar la obra:', error);
+    res.status(500).json({ error: 'Error al modificar la obra' });
+  }
+});
+
+// Eliminar una obra
+router.delete('/artworks/:id', verifyToken, async (req, res) => {
+  const { id } = req.params;
+  try {
+    await pool.query('DELETE FROM obra WHERE id = $1', [id]);
+    res.json({ message: 'Obra eliminada exitosamente' });
+  } catch (error) {
+    console.error('Error al eliminar la obra:', error);
+    res.status(500).json({ error: 'Error al eliminar la obra' });
+  }
+});
+
 module.exports = router;
