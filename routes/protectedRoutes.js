@@ -15,7 +15,7 @@ router.get('/artworks', verifyToken, async (req, res) => {
 });
 
 // Registrar "Me gusta" para una obra
-router.post('/protected/artworks/:id/like', verifyToken, async (req, res) => {
+router.post('/artworks/:id/like', verifyToken, async (req, res) => {
   try {
     const artworkId = req.params.id;
     const userId = req.user.id; // Obtener el ID del usuario desde el token
@@ -40,7 +40,17 @@ router.post('/protected/artworks/:id/like', verifyToken, async (req, res) => {
 router.post('/artworks/:id/bid', verifyToken, async (req, res) => {
   try {
     const artworkId = req.params.id;
-    await pool.query('INSERT INTO oferta (id_obra, id_users) VALUES ($1, $2)', [artworkId, req.user.id]);
+    const userId = req.user.id;
+
+    // Verificar si ya existe una oferta para esta obra por el mismo usuario
+    const existingBid = await pool.query('SELECT * FROM oferta WHERE id_obra = $1 AND id_users = $2', [artworkId, userId]);
+
+    if (existingBid.rows.length > 0) {
+      return res.status(400).json({ error: 'Ya has realizado una oferta para esta obra' });
+    }
+
+    // Insertar la oferta en la base de datos
+    await pool.query('INSERT INTO oferta (id_obra, id_users) VALUES ($1, $2)', [artworkId, userId]);
     res.json({ message: 'Oferta registrada con éxito' });
   } catch (error) {
     console.error('Error al registrar la oferta:', error);
@@ -76,7 +86,7 @@ router.get('/offers', verifyToken, async (req, res) => {
     console.error('Error al obtener las ofertas:', error);
     res.status(500).json({ error: 'Error al obtener las ofertas' });
   }
-});s
+});
 
 // Eliminar "Me gusta" de una obra
 router.delete('/likes/:id', verifyToken, async (req, res) => {
